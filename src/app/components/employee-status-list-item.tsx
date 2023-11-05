@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { PersonelData } from '../models/personel-data';
 import excelTimeToTimeString from '../utils/getLocalTime';
-import { statusColorMap } from '../models/status';
+import { EmployeeStatus, statusColorMap } from '../models/status';
 import { getElapsedTime } from '../utils/getElapsedTime';
 
 export function EmployeeStatusListItem({
@@ -23,7 +23,7 @@ export function EmployeeStatusListItem({
     [personelData.C]
   );
   const [timeElapsed, setTimeElapsed] = useState<string>();
-  const [statusColor, setStatusColor] = useState<string>();
+  const [status, setStatus] = useState<EmployeeStatus>();
 
   useEffect(() => {
     const { duration, elapsedTimeString } = getElapsedTime(
@@ -33,11 +33,11 @@ export function EmployeeStatusListItem({
     );
     const { hours } = duration;
     if (hours == null || hours < 8) {
-      setStatusColor(statusColorMap['GOOD']);
+      setStatus(EmployeeStatus.GOOD);
     } else if (hours >= 8 && hours <= 11) {
-      setStatusColor(statusColorMap['WARNING']);
+      setStatus(EmployeeStatus.WARNING);
     } else if (hours > 11) {
-      setStatusColor(statusColorMap['RISK']);
+      setStatus(EmployeeStatus.RISK);
     }
     setTimeElapsed(elapsedTimeString);
   }, [inTime, personelData.C, timeElapsed, today, currentTime]);
@@ -46,10 +46,16 @@ export function EmployeeStatusListItem({
     <>
       <li className="flex justify-between gap-x-6 py-5">
         <div className="flex min-w-0 gap-x-4">
-          <div className="mt-1 flex items-center gap-x-1.5">
-            <div className={`flex-none rounded-full ${statusColor}/20 p-1`}>
+          <div className="mt-1 flex items-center gap-x-6">
+            <div
+              className={`flex-none rounded-full ${
+                status ? statusColorMap[status].light : null
+              } p-1`}
+            >
               <div
-                className={`h-6 w-6 rounded-full  ${statusColor}
+                className={`h-6 w-6 rounded-full  ${
+                  status ? statusColorMap[status].dark : null
+                }
                 `}
               ></div>
             </div>

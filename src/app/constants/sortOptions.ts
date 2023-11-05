@@ -1,9 +1,9 @@
 export const sortOptions: SortOptions = {
   name: 'name',
-  timeIn: 'timeIn',
+  'time-In': 'time-In',
 };
 
 export interface SortOptions {
   name: string;
-  timeIn: string;
+  'time-In': string;
 }

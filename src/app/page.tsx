@@ -21,7 +21,7 @@ export default function Home() {
   const [startIndex, setStartIndex] = useState(0);
   const [endIndex, setEndIndex] = useState(perPage * (activePage - 1));
   const [activeList, setCurrentList] = useState(personelList.slice(0, perPage));
-  const [sort, setSort] = useState<string>(sortOptions.timeIn);
+  const [sort, setSort] = useState<string>(sortOptions['time-In']);
 
   const process = (ab: ArrayBuffer) => {
     console.log('Starting');
@@ -45,7 +45,7 @@ export default function Home() {
   useEffect(() => {
     const sortedList = personelList.sort((a, b) => {
       console.log(sort);
-      if (sort == sortOptions.timeIn) {
+      if (sort == sortOptions['time-In']) {
         return a.J - b.J;
       } else {
         return a.A.localeCompare(b.A);
@@ -106,7 +106,7 @@ export default function Home() {
             <SelectMenu
               label="Sort by"
               selectedValue={sort}
-              options={[sortOptions.name, sortOptions.timeIn]}
+              options={[sortOptions.name, sortOptions['time-In']]}
               onSelect={(event: ChangeEvent<HTMLSelectElement>) => {
                 setSort(sortOptions[event.target.value as keyof SortOptions]);
               }}
