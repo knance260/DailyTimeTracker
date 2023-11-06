@@ -3,6 +3,7 @@
 export default function FileInput({ process }: { process: Function }) {
   const onChange = async (event: any) => {
     const fileBuffer = await event.target.files[0].arrayBuffer();
+
     process(fileBuffer);
   };
 

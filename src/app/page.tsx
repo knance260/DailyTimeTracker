@@ -29,13 +29,23 @@ export default function Home() {
       const data = read(ab, { type: 'array' });
       console.log(data);
       const firstSheet = data.Sheets[data.SheetNames[0]];
+
       let dataList = utils
-        .sheet_to_json<PersonelData>(firstSheet, { header: 'A' })
-        .sort((a: PersonelData, b: PersonelData) => a.J - b.J)
-        .slice(5);
+        .sheet_to_json<PersonelData>(firstSheet, {
+          header: 'A',
+        })
+        .slice(5)
+        .filter((entry: PersonelData) => {
+          console.log(entry, entry.D == 'Exempt');
+          return (
+            entry.D != 'Exempt' && entry.D != 'exempt' && entry.F == '0000-210'
+          );
+        })
+        .sort((a: PersonelData, b: PersonelData) => a.J - b.J);
 
       setPersonelData(dataList as any);
     } catch (error) {
+      console.log(error);
       alert(
         'There was a problem importing the file. The data should start on line 5 and have the following data. Employee name in column A, the Date in column C, ActualIn time (or desired time to track) in column J, and the ActualOut (or desired out time to track) in column L.'
       );
