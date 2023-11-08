@@ -2,14 +2,20 @@
 
 import React, { ChangeEvent, useEffect } from 'react';
 import { useState } from 'react';
+import dynamic from 'next/dynamic';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/20/solid';
 import { utils, read } from 'xlsx';
+
 import PersonelStatusList from './components/employee-status-list';
 import FileInput from './components/file-input';
 import SelectMenu from './components/drop-down';
 import { itemsPerPage } from './constants/itemsPerPage';
 import { SortOptions, sortOptions } from './constants/sortOptions';
 import { PersonelData } from './models/personel-data';
+
+const NOSSR = dynamic(() => import('./page'), {
+  ssr: false,
+});
 
 export default function Home() {
   const [personelList, setPersonelData] = useState<any[]>([]);
@@ -24,10 +30,8 @@ export default function Home() {
   const [sort, setSort] = useState<string>(sortOptions['time-In']);
 
   const process = (ab: ArrayBuffer) => {
-    console.log('Starting');
     try {
       const data = read(ab, { type: 'array' });
-      console.log(data);
       const firstSheet = data.Sheets[data.SheetNames[0]];
 
       let dataList = utils
@@ -36,7 +40,6 @@ export default function Home() {
         })
         .slice(5)
         .filter((entry: PersonelData) => {
-          console.log(entry, entry.D == 'Exempt');
           return (
             entry.D != 'Exempt' && entry.D != 'exempt' && entry.F == '0000-210'
           );
@@ -45,7 +48,6 @@ export default function Home() {
 
       setPersonelData(dataList as any);
     } catch (error) {
-      console.log(error);
       alert(
         'There was a problem importing the file. The data should start on line 5 and have the following data. Employee name in column A, the Date in column C, ActualIn time (or desired time to track) in column J, and the ActualOut (or desired out time to track) in column L.'
       );
@@ -54,15 +56,12 @@ export default function Home() {
 
   useEffect(() => {
     const sortedList = personelList.sort((a, b) => {
-      console.log(sort);
       if (sort == sortOptions['time-In']) {
         return a.J - b.J;
       } else {
         return a.A.localeCompare(b.A);
       }
     });
-
-    console.log(sortedList);
 
     setPersonelData(sortedList);
   }, [sort, personelList]);
@@ -73,7 +72,6 @@ export default function Home() {
     const lastItemIndex =
       calculatedEnd <= personelList.length - 1 ? calculatedEnd : undefined;
     const newList = personelList.slice(startIndex, lastItemIndex);
-    console.log(newList, startIndex, lastItemIndex);
     setCurrentList(newList);
     setStartIndex(startIndex);
     setEndIndex(lastItemIndex ?? personelList.length);
@@ -88,8 +86,7 @@ export default function Home() {
 
   useEffect(() => {
     function setTime() {
-      const now = new Date(Date.now());
-      setCurrentTime(now);
+      setCurrentTime(new Date(Date.now()));
       return setTime;
     }
 
