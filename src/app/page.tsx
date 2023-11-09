@@ -41,7 +41,9 @@ export default function Home() {
         .slice(5)
         .filter((entry: PersonelData) => {
           return (
-            entry.D != 'Exempt' && entry.D != 'exempt' && entry.F == '0000-210'
+            entry.D != 'Exempt' &&
+            entry.D != 'exempt' &&
+            (entry.F == '0000-210' || entry.F == '0000-220')
           );
         })
         .sort((a: PersonelData, b: PersonelData) => a.J - b.J);
