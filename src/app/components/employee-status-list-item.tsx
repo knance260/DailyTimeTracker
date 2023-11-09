@@ -70,8 +70,12 @@ export function EmployeeStatusListItem({
           </div>
         </div>
         <div className="hidden shrink-0 sm:flex sm:flex-col sm:items-end">
-          <p className="text-sm leading-6 text-gray-900">{inTime}</p>
-          <p className="mt-1 text-xs leading-5 text-gray-500">{outTime}</p>
+          <p className="text-sm leading-6 text-gray-900">
+            Time-in: <span className="font-bold">{inTime} </span>
+          </p>
+          <p className="mt-1 text-xs leading-5 text-gray-500">
+            Time-out: <span className="font-bold">{outTime}</span>
+          </p>
         </div>
       </li>
     </>
