@@ -5,6 +5,7 @@ import { PersonelData } from '../models/personel-data';
 import excelTimeToTimeString from '../utils/getLocalTime';
 import { EmployeeStatus, statusColorMap } from '../models/status';
 import { getElapsedTime } from '../utils/getElapsedTime';
+import { duration } from 'moment';
 
 export function EmployeeStatusListItem({
   personelData,
@@ -15,15 +16,13 @@ export function EmployeeStatusListItem({
   currentTime: Date;
 }) {
   const inTime: string = excelTimeToTimeString(personelData.J);
-  const outTime: string =
-    personelData.L != undefined ? excelTimeToTimeString(personelData.L) : '--';
 
   const today = useMemo(
     () => new Date((personelData.C - (25567 + 1)) * 86400 * 1000),
     [personelData.C]
   );
   const [timeElapsed, setTimeElapsed] = useState<string>();
-  const [status, setStatus] = useState<EmployeeStatus>();
+  const [status, setStatus] = useState<EmployeeStatus | undefined>();
 
   useEffect(() => {
     const { duration, elapsedTimeString } = getElapsedTime(
@@ -31,8 +30,9 @@ export function EmployeeStatusListItem({
       today,
       currentTime
     );
-    const { hours } = duration;
-    if (hours == null || hours < 8) {
+    const hours = duration.hours ?? 0;
+
+    if (hours <= 8) {
       setStatus(EmployeeStatus.GOOD);
     } else if (hours >= 8 && hours <= 11) {
       setStatus(EmployeeStatus.WARNING);
@@ -40,7 +40,7 @@ export function EmployeeStatusListItem({
       setStatus(EmployeeStatus.RISK);
     }
     setTimeElapsed(elapsedTimeString);
-  }, [inTime, personelData.C, timeElapsed, today, currentTime]);
+  }, [currentTime, inTime, today]);
 
   return (
     <>
@@ -49,12 +49,12 @@ export function EmployeeStatusListItem({
           <div className="mt-1 flex items-center gap-x-6">
             <div
               className={`flex-none rounded-full ${
-                status ? statusColorMap[status].light : null
+                status != null ? statusColorMap[status].light : ''
               } p-1`}
             >
               <div
                 className={`h-6 w-6 rounded-full  ${
-                  status ? statusColorMap[status].dark : null
+                  status != null ? statusColorMap[status].dark : ''
                 }
                 `}
               ></div>
@@ -72,9 +72,6 @@ export function EmployeeStatusListItem({
         <div className="hidden shrink-0 sm:flex sm:flex-col sm:items-end">
           <p className="text-sm leading-6 text-gray-900">
             Time-in: <span className="font-bold">{inTime} </span>
-          </p>
-          <p className="mt-1 text-xs leading-5 text-gray-500">
-            Time-out: <span className="font-bold">{outTime}</span>
           </p>
         </div>
       </li>
