@@ -19,7 +19,7 @@ export function EmployeeStatusListItem({
 
   const [timeElapsed, setTimeElapsed] = useState<string>();
   const [status, setStatus] = useState<EmployeeStatus | undefined>();
-  const isClockedOut = outTime !== undefined;
+  const [isClockedOut, toggleClockOut] = useState<boolean>(false);
 
   useEffect(() => {
     if (!isClockedOut) {
@@ -41,30 +41,10 @@ export function EmployeeStatusListItem({
     }
   }, [currentTime, inTime, isClockedOut]);
 
-  useEffect(() => {
-    if (isClockedOut) {
-      const { duration, elapsedTimeString } = getElapsedTime(
-        inTime,
-
-        outTime
-      );
-      const hours = duration.hours ?? 0;
-
-      if (hours < 8) {
-        setStatus(EmployeeStatus.GOOD);
-      } else if (hours >= 8 && hours <= 11) {
-        setStatus(EmployeeStatus.WARNING);
-      } else if (hours > 11) {
-        setStatus(EmployeeStatus.RISK);
-      }
-      setTimeElapsed(elapsedTimeString);
-    }
-  }, [isClockedOut, inTime, outTime]);
-
   return (
     <>
       <li
-        className={`flex justify-between gap-x-6 py-5 ${
+        className={`flex justify-between gap-x-6 py-5 px-2 ${
           isClockedOut ? 'bg-gray-100' : ''
         }`}
       >
@@ -92,7 +72,7 @@ export function EmployeeStatusListItem({
             </p>
           </div>
         </div>
-        <div className="hidden shrink-0 sm:flex sm:flex-col sm:items-end">
+        <div className="flex min-w-0 gap-x-4">
           <p className="text-sm leading-6 text-gray-900">
             Time-in:{' '}
             <time className="font-bold">
@@ -113,6 +93,22 @@ export function EmployeeStatusListItem({
               </time>
             </p>
           )}
+        </div>
+        <div className="hidden shrink-0 sm:flex sm:flex-col sm:items-end">
+          <button
+            className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 border border-red-700 rounded disabled:bg-gray-500 disabled:border-gray-700"
+            onClick={() => {
+              const clockOut = confirm(
+                `Are you sure you want to clock out ${personelData.A} ?\n This will stop the current timer`
+              );
+              if (clockOut) {
+                toggleClockOut(true);
+              }
+            }}
+            disabled={isClockedOut}
+          >
+            STOP
+          </button>
         </div>
       </li>
     </>
