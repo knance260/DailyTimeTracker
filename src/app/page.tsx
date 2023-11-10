@@ -26,7 +26,7 @@ export default function Home() {
 
   const process = (ab: ArrayBuffer) => {
     try {
-      const data = read(ab, { type: 'array' });
+      const data = read(ab, { type: 'array', cellDates: true });
       const firstSheet = data.Sheets[data.SheetNames[0]];
 
       let dataList = utils
@@ -37,7 +37,6 @@ export default function Home() {
         .map((item): PersonelData => {
           return {
             A: item.A,
-            C: item.C,
             D: item.D,
             F: item.F,
             J: item.J,
@@ -51,7 +50,9 @@ export default function Home() {
             (entry.F == '0000-210' || entry.F == '0000-220')
           );
         })
-        .sort((a: PersonelData, b: PersonelData) => a.J - b.J);
+        .sort(
+          (a: PersonelData, b: PersonelData) => a.J.getTime() - b.J.getTime()
+        );
 
       setPersonelData(dataList as any);
     } catch (error) {
@@ -62,9 +63,9 @@ export default function Home() {
   };
 
   useEffect(() => {
-    const sortedList = personelList.sort((a, b) => {
+    const sortedList = personelList.sort((a: PersonelData, b: PersonelData) => {
       if (sort == sortOptions['time-In']) {
-        return a.J - b.J;
+        return a.J.getTime() - b.J.getTime();
       } else {
         return a.A.localeCompare(b.A);
       }

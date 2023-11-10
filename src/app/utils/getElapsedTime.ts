@@ -1,25 +1,14 @@
-import { intervalToDuration } from 'date-fns';
+import { Duration } from 'date-fns';
 
 export function getElapsedTime(
-  starTime: string,
-  today: Date,
+  starTime: Date,
   currentTime: Date
 ): { elapsedTimeString: string; duration: Duration } {
-  const inYear = today.getFullYear();
-  const inMonth = today.getMonth();
-  const inDay = today.getDate();
-  const [hourIn, minuteIn] = starTime.split(':');
-  const inDateTime = new Date(
-    inYear,
-    inMonth,
-    inDay,
-    parseInt(hourIn),
-    parseInt(minuteIn)
-  );
+  const inDateTime = new Date(starTime);
 
   const secondsDiff = (currentTime.getTime() - inDateTime.getTime()) / 1000;
   const hoursDiff = Math.floor(secondsDiff / 3600);
-  const minutesDiff = Math.floor(secondsDiff / 60);
+  const minutesDiff = Math.floor(secondsDiff / 60) % 60;
 
   return {
     duration: { hours: hoursDiff, minutes: minutesDiff, seconds: secondsDiff },

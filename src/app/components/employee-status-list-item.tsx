@@ -14,15 +14,9 @@ export function EmployeeStatusListItem({
 
   currentTime: Date;
 }) {
-  const inTime: string = excelTimeToTimeString(personelData.J);
-  const outTime: string | undefined = personelData.L
-    ? excelTimeToTimeString(personelData.L)
-    : undefined;
-  console.log(inTime);
-  const today = useMemo(
-    () => new Date((personelData.C - (25567 + 1)) * 86400 * 1000),
-    [personelData.C]
-  );
+  const inTime: Date = personelData.J;
+  const outTime: Date | undefined = personelData.L;
+
   const [timeElapsed, setTimeElapsed] = useState<string>();
   const [status, setStatus] = useState<EmployeeStatus | undefined>();
   const isClockedOut = outTime !== undefined;
@@ -31,7 +25,7 @@ export function EmployeeStatusListItem({
     if (!isClockedOut) {
       const { duration, elapsedTimeString } = getElapsedTime(
         inTime,
-        today,
+
         currentTime
       );
       const hours = duration.hours ?? 0;
@@ -45,13 +39,13 @@ export function EmployeeStatusListItem({
       }
       setTimeElapsed(elapsedTimeString);
     }
-  }, [currentTime, inTime, today, isClockedOut]);
+  }, [currentTime, inTime, isClockedOut]);
 
   useEffect(() => {
     if (isClockedOut) {
-      const { duration, elapsedTimeString } = getTimeWorked(
+      const { duration, elapsedTimeString } = getElapsedTime(
         inTime,
-        today,
+
         outTime
       );
       const hours = duration.hours ?? 0;
@@ -65,7 +59,7 @@ export function EmployeeStatusListItem({
       }
       setTimeElapsed(elapsedTimeString);
     }
-  }, [today, isClockedOut, inTime, outTime]);
+  }, [isClockedOut, inTime, outTime]);
 
   return (
     <>
@@ -100,11 +94,23 @@ export function EmployeeStatusListItem({
         </div>
         <div className="hidden shrink-0 sm:flex sm:flex-col sm:items-end">
           <p className="text-sm leading-6 text-gray-900">
-            Time-in: <time className="font-bold">{inTime} </time>
+            Time-in:{' '}
+            <time className="font-bold">
+              {inTime.toLocaleTimeString('en-US', {
+                hour: '2-digit',
+                minute: '2-digit',
+              })}{' '}
+            </time>
           </p>
           {outTime != null && (
             <p className="mt-1 text-xs leading-5 text-gray-500">
-              Time-out: <time className="font-bold">{outTime} </time>
+              Time-out:{' '}
+              <time className="font-bold">
+                {outTime.toLocaleTimeString('en-US', {
+                  hour: '2-digit',
+                  minute: '2-digit',
+                })}{' '}
+              </time>
             </p>
           )}
         </div>

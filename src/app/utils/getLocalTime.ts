@@ -1,6 +1,13 @@
-export default function excelTimeToTimeString(timeDecimal: number) {
-  const timeInMilliseconds = timeDecimal * 24 * 60 * 60 * 1000;
-  const jsDate = new Date(1970, 0, 1, 0, 0, 0, timeInMilliseconds);
+export default function excelTimeToTimeString(excelDate: number) {
+  const jsDate = new Date(
+    1970,
+    0,
+    1,
+    0,
+    0,
+    (excelDate - (25567 + 1)) * 86400 * 1000
+  );
+  console.log(excelDate, jsDate);
 
   // Format the JavaScript Date as a time string with AM/PM
   const options: Intl.DateTimeFormatOptions = {
@@ -8,6 +15,6 @@ export default function excelTimeToTimeString(timeDecimal: number) {
     minute: '2-digit',
     hourCycle: 'h24',
   };
-
+  console.log();
   return jsDate.toLocaleTimeString('en-US', options);
 }
