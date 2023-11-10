@@ -2,7 +2,6 @@
 
 import React, { ChangeEvent, useEffect } from 'react';
 import { useState } from 'react';
-import dynamic from 'next/dynamic';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/20/solid';
 import { utils, read } from 'xlsx';
 
@@ -14,7 +13,7 @@ import { SortOptions, sortOptions } from './constants/sortOptions';
 import { PersonelData } from './models/personel-data';
 
 export default function Home() {
-  const [personelList, setPersonelData] = useState<any[]>([]);
+  const [personelList, setPersonelData] = useState<PersonelData[]>([]);
   const [currentTime, setCurrentTime] = useState<Date>(new Date(Date.now()));
   const [activePage, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState<number>(0);
@@ -35,6 +34,16 @@ export default function Home() {
           header: 'A',
         })
         .slice(5)
+        .map((item): PersonelData => {
+          return {
+            A: item.A,
+            C: item.C,
+            D: item.D,
+            F: item.F,
+            J: item.J,
+            L: item.L,
+          };
+        })
         .filter((entry: PersonelData) => {
           return (
             entry.D != 'Exempt' &&
@@ -42,7 +51,7 @@ export default function Home() {
             (entry.F == '0000-210' || entry.F == '0000-220')
           );
         })
-        .sort((a: PersonelData, b: PersonelData) => a.K - b.K);
+        .sort((a: PersonelData, b: PersonelData) => a.J - b.J);
 
       setPersonelData(dataList as any);
     } catch (error) {
@@ -55,7 +64,7 @@ export default function Home() {
   useEffect(() => {
     const sortedList = personelList.sort((a, b) => {
       if (sort == sortOptions['time-In']) {
-        return a.K - b.K;
+        return a.J - b.J;
       } else {
         return a.A.localeCompare(b.A);
       }

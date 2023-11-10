@@ -5,7 +5,6 @@ import { PersonelData } from '../models/personel-data';
 import excelTimeToTimeString from '../utils/getLocalTime';
 import { EmployeeStatus, statusColorMap } from '../models/status';
 import { getElapsedTime, getTimeWorked } from '../utils/getElapsedTime';
-import { duration } from 'moment';
 
 export function EmployeeStatusListItem({
   personelData,
@@ -15,7 +14,7 @@ export function EmployeeStatusListItem({
 
   currentTime: Date;
 }) {
-  const inTime: string = excelTimeToTimeString(personelData.K);
+  const inTime: string = excelTimeToTimeString(personelData.J);
   const outTime: string | undefined = personelData.L
     ? excelTimeToTimeString(personelData.L)
     : undefined;
