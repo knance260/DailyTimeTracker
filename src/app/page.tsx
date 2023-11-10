@@ -13,10 +13,6 @@ import { itemsPerPage } from './constants/itemsPerPage';
 import { SortOptions, sortOptions } from './constants/sortOptions';
 import { PersonelData } from './models/personel-data';
 
-const NOSSR = dynamic(() => import('./page'), {
-  ssr: false,
-});
-
 export default function Home() {
   const [personelList, setPersonelData] = useState<any[]>([]);
   const [currentTime, setCurrentTime] = useState<Date>(new Date(Date.now()));
@@ -46,7 +42,7 @@ export default function Home() {
             (entry.F == '0000-210' || entry.F == '0000-220')
           );
         })
-        .sort((a: PersonelData, b: PersonelData) => a.J - b.J);
+        .sort((a: PersonelData, b: PersonelData) => a.K - b.K);
 
       setPersonelData(dataList as any);
     } catch (error) {
@@ -59,7 +55,7 @@ export default function Home() {
   useEffect(() => {
     const sortedList = personelList.sort((a, b) => {
       if (sort == sortOptions['time-In']) {
-        return a.J - b.J;
+        return a.K - b.K;
       } else {
         return a.A.localeCompare(b.A);
       }
@@ -97,7 +93,7 @@ export default function Home() {
   }, []);
   return (
     <div className="max-w-6xl mx-auto px-6">
-      <div className="text-center text-3xl mt-12">
+      <div className="text-center text-3xl mt-12" suppressHydrationWarning>
         {currentTime.toLocaleDateString('en-us', {
           weekday: 'long',
           year: 'numeric',

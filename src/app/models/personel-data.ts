@@ -3,6 +3,6 @@ export interface PersonelData {
   C: number;
   D: string;
   F: string;
-  J: number;
+  K: number;
   L: number | undefined;
 }

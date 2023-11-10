@@ -5,6 +5,7 @@ export default function FileInput({ process }: { process: Function }) {
     const fileBuffer = await event.target.files[0].arrayBuffer();
 
     process(fileBuffer);
+    event.target.value = '';
   };
 
   return (
