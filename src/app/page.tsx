@@ -15,13 +15,15 @@ import { PersonelData } from './models/personel-data';
 export default function Home() {
   const [personelList, setPersonelData] = useState<PersonelData[]>([]);
   const [currentTime, setCurrentTime] = useState<Date>(new Date(Date.now()));
+  new Set<number>();
+
   const [activePage, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState<number>(0);
   const [pages, setPages] = useState<number[]>([]);
   const [perPage, setResultsPerPage] = useState(5);
   const [startIndex, setStartIndex] = useState(0);
   const [endIndex, setEndIndex] = useState(perPage * (activePage - 1));
-  const [activeList, setCurrentList] = useState(personelList.slice(0, perPage));
+  const [activeList, setCurrentList] = useState(personelList);
   const [sort, setSort] = useState<string>(sortOptions['time-In']);
 
   const process = (ab: ArrayBuffer) => {
@@ -54,7 +56,7 @@ export default function Home() {
           (a: PersonelData, b: PersonelData) => a.J.getTime() - b.J.getTime()
         );
 
-      setPersonelData(dataList as any);
+      setPersonelData(dataList);
     } catch (error) {
       alert(
         'There was a problem importing the file. The data should start on line 5 and have the following data. Employee name in column A, the Date in column C, ActualIn time (or desired time to track) in column J, and the ActualOut (or desired out time to track) in column L.'
@@ -138,6 +140,7 @@ export default function Home() {
           <PersonelStatusList
             activeList={activeList}
             currentTime={currentTime}
+            startIndex={startIndex}
           ></PersonelStatusList>
 
           <div className="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6">

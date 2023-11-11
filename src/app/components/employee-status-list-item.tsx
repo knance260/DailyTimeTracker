@@ -1,51 +1,50 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { PersonelData } from '../models/personel-data';
-import excelTimeToTimeString from '../utils/getLocalTime';
 import { EmployeeStatus, statusColorMap } from '../models/status';
-import { getElapsedTime, getTimeWorked } from '../utils/getElapsedTime';
+import { getElapsedTime } from '../utils/getElapsedTime';
 
 export function EmployeeStatusListItem({
   personelData,
   currentTime,
+  isStopped,
+  stopTimer,
 }: {
   personelData: PersonelData;
-
   currentTime: Date;
+  isStopped: boolean;
+  stopTimer: Function;
 }) {
   const inTime: Date = personelData.J;
   const outTime: Date | undefined = personelData.L;
 
   const [timeElapsed, setTimeElapsed] = useState<string>();
   const [status, setStatus] = useState<EmployeeStatus | undefined>();
-  const [isClockedOut, toggleClockOut] = useState<boolean>(false);
 
   useEffect(() => {
-    if (!isClockedOut) {
-      const { duration, elapsedTimeString } = getElapsedTime(
-        inTime,
+    const { duration, elapsedTimeString } = getElapsedTime(
+      personelData.J,
 
-        currentTime
-      );
-      const hours = duration.hours ?? 0;
+      currentTime
+    );
+    const hours = duration.hours ?? 0;
 
-      if (hours <= 8) {
-        setStatus(EmployeeStatus.GOOD);
-      } else if (hours >= 8 && hours <= 11) {
-        setStatus(EmployeeStatus.WARNING);
-      } else if (hours > 11) {
-        setStatus(EmployeeStatus.RISK);
-      }
-      setTimeElapsed(elapsedTimeString);
+    if (hours < 8) {
+      setStatus(EmployeeStatus.GOOD);
+    } else if (hours >= 8 && hours <= 11) {
+      setStatus(EmployeeStatus.WARNING);
+    } else if (hours > 11) {
+      setStatus(EmployeeStatus.RISK);
     }
-  }, [currentTime, inTime, isClockedOut]);
+    setTimeElapsed(elapsedTimeString);
+  }, [currentTime, personelData.J]);
 
   return (
     <>
       <li
         className={`flex justify-between gap-x-6 py-5 px-2 ${
-          isClockedOut ? 'bg-gray-100' : ''
+          isStopped ? 'bg-gray-100' : ''
         }`}
       >
         <div className="flex min-w-0 gap-x-4">
@@ -97,15 +96,15 @@ export function EmployeeStatusListItem({
         <div className="hidden shrink-0 sm:flex sm:flex-col sm:items-end">
           <button
             className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 border border-red-700 rounded disabled:bg-gray-500 disabled:border-gray-700"
-            onClick={() => {
+            onClick={(event) => {
               const clockOut = confirm(
                 `Are you sure you want to clock out ${personelData.A} ?\n This will stop the current timer`
               );
               if (clockOut) {
-                toggleClockOut(true);
+                stopTimer();
               }
             }}
-            disabled={isClockedOut}
+            disabled={isStopped}
           >
             STOP
           </button>
