@@ -71,7 +71,7 @@ export function EmployeeStatusListItem({
             </p>
           </div>
         </div>
-        <div className="flex min-w-0 gap-x-4">
+        <div className="flex min-w-0 gap-x-4 self-center">
           <p className="text-sm leading-6 text-gray-900">
             Time-in:{' '}
             <time className="font-bold">
@@ -81,24 +81,13 @@ export function EmployeeStatusListItem({
               })}{' '}
             </time>
           </p>
-          {outTime != null && (
-            <p className="mt-1 text-xs leading-5 text-gray-500">
-              Time-out:{' '}
-              <time className="font-bold">
-                {outTime.toLocaleTimeString('en-US', {
-                  hour: '2-digit',
-                  minute: '2-digit',
-                })}{' '}
-              </time>
-            </p>
-          )}
         </div>
         <div className="hidden shrink-0 sm:flex sm:flex-col sm:items-end">
           <button
             className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 border border-red-700 rounded disabled:bg-gray-500 disabled:border-gray-700"
-            onClick={(event) => {
+            onClick={() => {
               const clockOut = confirm(
-                `Are you sure you want to clock out ${personelData.A} ?\n This will stop the current timer`
+                `Are you sure you want to clock ${personelData.A} out?\n This will stop the current timer`
               );
               if (clockOut) {
                 stopTimer();
