@@ -39,6 +39,7 @@ export default function Home() {
         .filter((entry: PersonelData) => {
           return (
             entry.A != null &&
+            entry.B != null &&
             entry.J != null &&
             entry.D != 'Exempt' &&
             entry.D != 'exempt' &&
