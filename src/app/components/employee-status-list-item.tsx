@@ -17,7 +17,6 @@ export function EmployeeStatusListItem({
   stopTimer: Function;
 }) {
   const inTime: Date = personelData.J;
-  const outTime: Date | undefined = personelData.L;
 
   const [timeElapsed, setTimeElapsed] = useState<string>();
   const [status, setStatus] = useState<EmployeeStatus | undefined>();

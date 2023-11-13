@@ -11,7 +11,6 @@ import SelectMenu from './components/drop-down';
 import { itemsPerPage } from './constants/itemsPerPage';
 import { SortOptions, sortOptions } from './constants/sortOptions';
 import { PersonelData } from './models/personel-data';
-import { tr } from 'date-fns/locale';
 
 export default function Home() {
   const [personelList, setPersonelData] = useState<PersonelData[]>([]);
@@ -35,7 +34,6 @@ export default function Home() {
       let dataList = utils
         .sheet_to_json<PersonelData>(firstSheet, {
           header: 'A',
-          raw: true,
         })
         .slice(5)
         .filter((entry: PersonelData) => {
@@ -48,21 +46,28 @@ export default function Home() {
           );
         })
         .map((item): PersonelData => {
-          console.log(item);
           return {
             A: item.A,
+            B: item.B,
             D: item.D,
             F: item.F,
             J: item.J,
             L: item.L,
           };
-        })
+        });
 
-        .sort(
-          (a: PersonelData, b: PersonelData) => a.J.getTime() - b.J.getTime()
-        );
-
-      setPersonelData(dataList);
+      const seenNames = new Set();
+      const duplicatesRemovedList: PersonelData[] = [];
+      dataList.forEach((item: PersonelData) => {
+        if (!seenNames.has(item.B)) {
+          duplicatesRemovedList.push(item);
+          seenNames.add(item.B);
+        }
+      });
+      duplicatesRemovedList.sort(
+        (a: PersonelData, b: PersonelData) => a.J.getTime() - b.J.getTime()
+      );
+      setPersonelData(duplicatesRemovedList);
     } catch (error) {
       console.log(error);
       alert(
@@ -72,15 +77,21 @@ export default function Home() {
   };
 
   useEffect(() => {
-    const sortedList = personelList.sort((a: PersonelData, b: PersonelData) => {
-      if (sort == sortOptions['time-In']) {
-        return a.J.getTime() - b.J.getTime();
-      } else {
-        return a.A.localeCompare(b.A);
-      }
-    });
+    try {
+      const sortedList = personelList.sort(
+        (a: PersonelData, b: PersonelData) => {
+          if (sort == sortOptions['time-In']) {
+            return a.J.getTime() - b.J.getTime();
+          } else {
+            return a.A.localeCompare(b.A);
+          }
+        }
+      );
 
-    setPersonelData(sortedList);
+      setPersonelData(sortedList);
+    } catch (e) {
+      console.log(e);
+    }
   }, [sort, personelList]);
 
   useEffect(() => {
