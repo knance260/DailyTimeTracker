@@ -1,20 +1,23 @@
 'use client';
 
+import { useState } from 'react';
+
 export default function FileInput({ process }: { process: Function }) {
+  const [fileName, setFileName] = useState<string | undefined>();
   const onChange = async (event: any) => {
     const fileBuffer = await event.target.files[0].arrayBuffer();
 
     process(fileBuffer);
+    setFileName(event.target.value);
     event.target.value = '';
   };
 
   return (
     <div className="mb-3 w-96 mx-auto">
-      <label
-        htmlFor="formFile"
-        className="mb-2 inline-block text-neutral-700 dark:text-neutral-200"
-      >
-        Upload file
+      <label htmlFor="formFile" className="mb-2 inline-block">
+        {fileName != null
+          ? fileName.replace('C:\\fakepath\\', '')
+          : 'Upload file'}
       </label>
 
       <input
