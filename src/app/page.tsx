@@ -11,6 +11,7 @@ import SelectMenu from './components/drop-down';
 import { itemsPerPage } from './constants/itemsPerPage';
 import { SortOptions, sortOptions } from './constants/sortOptions';
 import { PersonelData } from './models/personel-data';
+import { tr } from 'date-fns/locale';
 
 export default function Home() {
   const [personelList, setPersonelData] = useState<PersonelData[]>([]);
@@ -34,9 +35,20 @@ export default function Home() {
       let dataList = utils
         .sheet_to_json<PersonelData>(firstSheet, {
           header: 'A',
+          raw: true,
         })
         .slice(5)
+        .filter((entry: PersonelData) => {
+          return (
+            entry.A != null &&
+            entry.J != null &&
+            entry.D != 'Exempt' &&
+            entry.D != 'exempt' &&
+            (entry.F == '0000-210' || entry.F == '0000-220')
+          );
+        })
         .map((item): PersonelData => {
+          console.log(item);
           return {
             A: item.A,
             D: item.D,
@@ -45,19 +57,14 @@ export default function Home() {
             L: item.L,
           };
         })
-        .filter((entry: PersonelData) => {
-          return (
-            entry.D != 'Exempt' &&
-            entry.D != 'exempt' &&
-            (entry.F == '0000-210' || entry.F == '0000-220')
-          );
-        })
+
         .sort(
           (a: PersonelData, b: PersonelData) => a.J.getTime() - b.J.getTime()
         );
 
       setPersonelData(dataList);
     } catch (error) {
+      console.log(error);
       alert(
         'There was a problem importing the file. The data should start on line 5 and have the following data. Employee name in column A, the Date in column C, ActualIn time (or desired time to track) in column J, and the ActualOut (or desired out time to track) in column L.'
       );
