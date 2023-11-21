@@ -13,19 +13,19 @@ export default function PersonelStatusList({
   currentTime: Date;
   startIndex: number;
 }) {
-  const [stopTimes, setStoppedTimes] = useState<Map<number, Date>>(new Map());
+  const [stopTimes, setStoppedTimes] = useState<Map<string, Date>>(new Map());
 
   return (
     <>
       <ul role="list" className="divide-y divide-gray-100 ">
-        {activeList.map((personel, index) => (
+        {activeList.map((personel) => (
           <EmployeeStatusListItem
             key={personel.A}
             personelData={personel}
-            currentTime={stopTimes.get(startIndex + index) ?? currentTime}
-            isStopped={stopTimes.has(startIndex + index)}
+            currentTime={stopTimes.get(personel.B) ?? currentTime}
+            isStopped={stopTimes.has(personel.B)}
             stopTimer={() => {
-              const updatedSet = stopTimes.set(startIndex + index, new Date());
+              const updatedSet = stopTimes.set(personel.B, new Date());
               setStoppedTimes(updatedSet);
             }}
           ></EmployeeStatusListItem>
