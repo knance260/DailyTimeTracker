@@ -7,11 +7,9 @@ import { EmployeeStatusListItem } from './employee-status-list-item';
 export default function PersonelStatusList({
   activeList,
   currentTime,
-  startIndex,
 }: {
   activeList: PersonelData[];
   currentTime: Date;
-  startIndex: number;
 }) {
   const [stopTimes, setStoppedTimes] = useState<Map<string, Date>>(new Map());
 
