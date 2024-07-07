@@ -28,8 +28,10 @@ export function EmployeeStatusListItem({
     EmployeeStatus | undefined
   >();
 
-  const totalHoursWorked =
-    (previousHoursWorked ?? 0) + (elapsedTime?.hours ?? 0);
+  const totalTimeWorked: Duration = {
+    hours: (previousHoursWorked ?? 0) + (elapsedTime?.hours ?? 0),
+    minutes: elapsedTime?.minutes,
+  };
 
   const handlePreviousHoursChange = (
     event: ChangeEvent<HTMLInputElement>
@@ -53,15 +55,17 @@ export function EmployeeStatusListItem({
       setStatus(EmployeeStatus.RISK);
     }
 
-    if (totalHoursWorked >= 58) {
+    const totalHours = totalTimeWorked.hours ?? 0;
+
+    if (totalHours >= 58) {
       setWeeklyStatus(EmployeeStatus.RISK);
-    } else if (totalHoursWorked > 55) {
+    } else if (totalHours > 55) {
       setWeeklyStatus(EmployeeStatus.WARNING);
     }
 
     setTimeElapsed(elapsedTimeString);
     setElapsedTime(duration);
-  }, [currentTime, personelData.J, totalHoursWorked]);
+  }, [currentTime, personelData.J, totalTimeWorked.hours]);
 
   return (
     <>
@@ -123,8 +127,9 @@ export function EmployeeStatusListItem({
         </div>
         <div className="flex min-w-0 gap-x-4 self-center">
           <p className="text-sm leading-6 text-gray-900">
-            Total Hours this week:{' '}
-            <time className="font-bold">{totalHoursWorked}</time>
+            Total time this week:{' '}
+            <b className="font-bold">{totalTimeWorked.hours}</b> hours{' '}
+            <b className="font-bold">{totalTimeWorked.minutes}</b> minutes
           </p>
         </div>
         <div className="hidden shrink-0 sm:flex sm:flex-col sm:items-end">
